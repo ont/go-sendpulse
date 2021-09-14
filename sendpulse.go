@@ -3,6 +3,7 @@ package sendpulse
 import (
 	"context"
 	"net/http"
+	"time"
 
 	resty "github.com/go-resty/resty/v2"
 	"golang.org/x/oauth2/clientcredentials"
@@ -14,12 +15,13 @@ type Sendpulse struct {
 	SMTP *apiSmtp
 }
 
-func New(clientId, clientSecret string, debug bool) *Sendpulse {
+func New(clientId, clientSecret string, timeout time.Duration, debug bool) *Sendpulse {
 	oauthClient := newOAuthClient(clientId, clientSecret)
 
 	client := resty.NewWithClient(oauthClient)
 	client.SetHostURL("https://api.sendpulse.com")
 	client.SetDebug(debug)
+	client.SetTimeout(timeout)
 
 	return &Sendpulse{
 		client: client,
